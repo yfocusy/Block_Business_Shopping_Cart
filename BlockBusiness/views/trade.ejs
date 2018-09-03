@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Trade</title>
+  <script src="./js/jquery-3.1.0.min.js"></script>
+  <script src="https://code.jquery.com/jquery-migrate-3.0.1.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+  
+  <script type="text/javascript" src="./js/please-wait.min.js"></script>
+  <link href="./css/please-wait.css" rel="stylesheet">
+  <link href="./css/spiner.css" rel="stylesheet">
+</head>
+<body>
+  <h1 style="color:Orange;">Trade Info</h1>
+  <button type="button" id="eth">Ethereum</button>
+  <div id="Ethereum">
+    <p id="show">some stuff here</p>
+  </div>
+
+ 
+  <button type="button" id="tip" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Tooltip on top">
+    Tooltip on top
+  </button>
+
+  <form id="comment_form">
+    <textarea id="comment" rows="3" cols="50"></textarea>
+    <input type="submit" onclick="saveComment()"/>
+  </form>
+
+</body>
+
+<script type="text/javascript">
+  // window.loading_screen = window.pleaseWait({
+  //   logo: "./images/logo3.png",
+  //   backgroundColor: '#000000',
+  //   loadingHtml: '<div><h2 style="color:Orange;">Your purchase is processed on block-chain now</h2></div> \
+  //                 <div class="sk-folding-cube"> \
+  //                 <div class="sk-cube1 sk-cube"></div> \
+  //                 <div class="sk-cube2 sk-cube"></div> \
+  //                 <div class="sk-cube4 sk-cube"></div> \
+  //                 <div class="sk-cube3 sk-cube"></div> \
+  //                 </div>'
+  // })
+  // setTimeout("updateMessage('Complete!')", 3000)
+  // function updateMessage(words) {
+  //   window.loading_screen.updateLoadingHtml('<div><h2 style="color:Orange;">' + words + '</h2></div>')
+  // }
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+
+   
+  })
+  
+  $("#eth").on('click', function(){
+    console.log("check")
+  
+    $.get("https://api.coinmarketcap.com/v2/ticker/1027/?convert=AUD", function(result){
+      console.log(result)
+      var rate = new Number(result.data.quotes.AUD.price).toFixed(2)
+      console.log("Extract quotes")
+      console.log(rate)
+      $("#show").text(rate)
+      $("#tip").attr('title', rate + " AUD")
+      $("#tip").html(rate+"AUD")
+    })
+  }) 
+
+  function saveComment() {
+    
+  }
+ 
+</script>
+</html>

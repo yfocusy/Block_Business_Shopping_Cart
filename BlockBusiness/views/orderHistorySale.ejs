@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Order History</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="N-Air"
+    />
+    <script type="application/x-javascript">
+        addEventListener("load", function() {
+            setTimeout(hideURLbar, 0);
+        }, false);
+
+        function hideURLbar() {
+            window.scrollTo(0, 1);
+        }
+    </script>
+    <meta charset utf="8">
+    <!--fonts-->
+    <link href='https://fonts.googleapis.com/css?family=Fredoka+One' rel='stylesheet' type='text/css'>
+
+    <!--fonts-->
+    <!--bootstrap-->
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <!--coustom css-->
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <!--shop-kart-js-->
+    <script src="js/simpleCart.min.js"></script>
+    <!--default-js-->
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <!--bootstrap-js-->
+    <script src="js/bootstrap.min.js"></script>
+    <!--script-->
+    <!-- FlexSlider -->
+    <script src="js/imagezoom.js"></script>
+    <script defer src="js/jquery.flexslider.js"></script>
+    <link rel="stylesheet" href="css/flexslider.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="/javascripts/allJSforCart.js"></script>
+    <script>
+        // Can also be used with $(document).ready()
+        $(window).load(function() {
+            $('.flexslider').flexslider({
+                animation: "slide",
+                controlNav: "thumbnails"
+            });
+        });
+
+        function Deliver(id) {
+            console.log("Trade ID: " + id)
+            var note = prompt("Freight Note:")
+                if (note != null && note != "")
+                    {
+                        console.log(note)
+                        block_json = {id:id, note:note}
+                        $.ajax({
+                            type: 'POST',
+                            url: '/checkout/delivery',
+                            contentType: "application/json",
+                            dataType: 'json',
+                            data: JSON.stringify(block_json),
+                            success: function (data) {
+                                if (data.msg){
+                                    window.alert(data.msg)
+                                    window.location.href = "/ViewOrderSale"
+                                } else if (data.err){
+                                    window.alert(data.err)
+                                }
+                            },
+                            error: function (err) {
+                                console.log(err.message)
+
+                            }
+                        })
+                } else {
+                    alert("Freight note shall not be empty!")
+                }
+        }
+            
+        
+        
+    </script>
+    <!-- //FlexSlider-->
+</head>
+
+<body>
+<%include header.ejs%>
+<div class="head-bread">
+    <div class="container">
+        <ol class="breadcrumb">
+            <li><a href="/index">Home</a></li>
+            <li><a href="/ProfileControl">Profile</a></li>
+            <li class="active">Sale History</li>
+        </ol>
+    </div>
+</div>
+
+<!--cart-->
+<div class="check">
+    <div class="container">
+        <div class="col-md-12 cart-items">
+
+            <h1 id="totalItemsNum">My Sale History (<%=JSON.parse(JSON.stringify(result)).length%>)</h1>
+
+            <!--order history-->
+
+            <%
+            var totalMoney = 0;
+
+            for (var i=0 ; i<JSON.parse(JSON.stringify(result)).length; i++)
+            {
+      
+                var each = JSON.parse(JSON.stringify(result))[i];
+
+            %>
+
+            <div class="cart-header<%=i%>">
+
+                <div class="cart-sec simpleCart_shelfItem" style="border: grey">
+                    <div class="cart-item cyc" >
+                        <a href="/single/showproduct?pid=<%=each.pid%>"><img src="<%=each.imgPath%>" class="img-responsive" alt="" /></a>
+                    </div>
+
+                    <div class="cart-item-info">
+                        <h3><%=each.productName%></h3>
+                        <p hidden id="pid<%=i%>"><%=each.pid%></p>
+                    </div>
+
+                    <div style="cursor:pointer">
+                    <% if (!each.delivery) { %>
+                        <div class="pull-right"><button id="delivery" type="button" class="btn btn-primary" onclick='Deliver("<%=each._id%>")'>Deliver</button></div>
+                    <% } else {%>
+                        <span class="label label-info">Delivered</span>
+                        <% if (each.status) {%>
+                            <div class="pull-right">
+                                <span class="label label-success">Buyer Confirmed</span>
+                            </div>
+                        <% }%>
+                    <% } %>
+                    </div>
+
+                    <div class="cart-item-info">
+                        <ul class="qty">
+                            <li>
+                                <p>Qty : <%=each.number%></p>
+                            </li>
+                            <li>
+                                <p>Price each : <%=each.productPrice%></p>
+                            </li>
+                            <li>
+                                <p>Total Income : <%=each.productPrice*each.number%></p>
+                            </li>
+                            <li>
+                                <p>Transition block : <%=each.blockhash%></p>
+                            </li>
+                            <% var time_old = each.meta.updateAt;
+
+                                time_new = time_old.substring(0,10) + " " + time_old.substring(11,16);
+                          
+                            %>
+                            <li>
+                                <p>Transition time: <%=time_new%></p>
+                            </li>
+                        </ul>
+                        <p>Buyer: <%=each.buyerName%></p>
+                    </div>
+                    <div class="clearfix"></div>
+
+                </div>
+            </div>
+            <br/>
+
+            <%
+            }
+            %>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!--5. foot start -->
+<%include footer.ejs%>
+</body>
+
+</html>

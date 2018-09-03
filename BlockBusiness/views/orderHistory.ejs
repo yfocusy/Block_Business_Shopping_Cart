@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Order History</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="N-Air"
+    />
+    <script type="application/x-javascript">
+        addEventListener("load", function() {
+            setTimeout(hideURLbar, 0);
+        }, false);
+
+        function hideURLbar() {
+            window.scrollTo(0, 1);
+        }
+    </script>
+    <meta charset utf="8">
+    <!--fonts-->
+    <link href='https://fonts.googleapis.com/css?family=Fredoka+One' rel='stylesheet' type='text/css'>
+
+    <!--fonts-->
+    <!--bootstrap-->
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <!--coustom css-->
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <!--shop-kart-js-->
+    <script src="js/simpleCart.min.js"></script>
+    <!--default-js-->
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <!--bootstrap-js-->
+    <script src="js/bootstrap.min.js"></script>
+    <!--script-->
+    <!-- FlexSlider -->
+    <script src="js/imagezoom.js"></script>
+    <script defer src="js/jquery.flexslider.js"></script>
+    <link rel="stylesheet" href="css/flexslider.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="/javascripts/MyTrade.js"></script>
+
+    <link href="./css/please-wait.css" rel="stylesheet">
+    <link href="./css/spiner.css" rel="stylesheet">
+    <script type="text/javascript" src="/js/please-wait.min.js"></script>
+    <script>
+        // Can also be used with $(document).ready()
+        $(window).load(function() {
+            $('.flexslider').flexslider({
+                animation: "slide",
+                controlNav: "thumbnails"
+            });
+        });
+
+         function updateMessage(words) {
+            window.loading_screen.updateLoadingHtml('<div><h2 style="color:Orange;">' + words + '</h2></div>')
+        }
+
+        function TradeConfirm(index, address, id) {
+            var r = confirm("Your ether will be released to seller. Make sure you have received the item.")
+            if (!r) {
+                return 0
+            }
+            console.log("Get block index: " + index)
+            console.log(address)
+            console.log(id)
+            window.loading_screen = pleaseWait({
+                logo: "./images/logo3.png",
+                backgroundColor: '#000000',
+                loadingHtml: '<div><h2 style="color:Orange;">Release your ether now</h2></div> \
+                <div class="sk-cube-grid">\
+                <div class="sk-cube sk-cube1"></div>\
+                <div class="sk-cube sk-cube2"></div>\
+                <div class="sk-cube sk-cube3"></div>\
+                <div class="sk-cube sk-cube4"></div>\
+                <div class="sk-cube sk-cube5"></div>\
+                <div class="sk-cube sk-cube6"></div>\
+                <div class="sk-cube sk-cube7"></div>\
+                <div class="sk-cube sk-cube8"></div>\
+                <div class="sk-cube sk-cube9"></div>\
+                </div>'
+                })
+
+            App.confirmTransaction(index, address)
+            block_json = {id:id}
+            $.ajax({
+                type: 'POST',
+                url: '/checkout/confirmorder',
+                contentType: "application/json",
+                dataType: 'json',
+                data: JSON.stringify(block_json),
+                success: function (data) {
+                    if (data.msg){
+                        window.alert(data.msg)
+                        window.loading_screen.finish()
+                        window.location.href = "/ViewOrder"
+                    } else if (data.err){
+                        window.alert(data.err)
+                    }
+                },
+                error: function (err) {
+                    console.log(err.message)
+
+                }
+            })
+
+        }
+    </script>
+    <!-- //FlexSlider-->
+</head>
+
+<body>
+<%include header.ejs%>
+
+<div class="head-bread">
+    <div class="container">
+        <ol class="breadcrumb">
+            <li><a href="/index">Home</a></li>
+            <li><a href="/ProfileControl">Profile</a></li>
+            <li class="active">Purchase History</li>
+        </ol>
+    </div>
+</div>
+
+<!--cart-->
+<div class="check">
+    <div class="container">
+        <div class="col-md-12 cart-items">
+
+            <h1 id="totalItemsNum">My Purchase History (<%=JSON.parse(JSON.stringify(result)).length%>)</h1>
+
+            <!--order history-->
+
+            <%
+            var totalMoney = 0;
+
+            for (var i=0 ; i<JSON.parse(JSON.stringify(result)).length; i++)
+            {
+          
+                var each = JSON.parse(JSON.stringify(result))[i];
+
+            %>
+            <div class="cart-header<%=i%>" style="margin-top: 15px">
+
+                <div class="cart-sec simpleCart_shelfItem" style="border:1px solid #f0f0f0;">
+                    <div class="cart-item cyc">
+                        <a href="/single/showproduct?pid=<%=each.pid%>"><img style="width: 200px; height: 130px" src="<%=each.imgPath%>" class="img-responsive" alt="" /></a>
+                    </div>
+
+                    <div class="cart-item-info">
+                        <h4 style="white-space: nowrap;max-width: 400px; overflow: hidden "><%=each.productName%></h4>
+                        <p hidden id="pid<%=i%>"><%=each.pid%></p>
+                    </div>
+                    <% if (!each.status) { %>
+                    <div style="cursor:pointer">
+                        <div class="pull-right"><button type="button" class="btn btn-primary" onclick='TradeConfirm("<%=each.blockIndex%>", "<%=each.buyerHash%>", "<%=each._id%>")'>Confirm</button></div>
+                        <% if (each.delivery) { %>
+                            <span class="label label-info">Delivering</span>
+                        <% } else { %>
+                            <span class="label label-warning">Waiting</span>
+                        <% } %>
+                    </div>
+                    <% } else { %>
+                        <div class="pull-right">
+                            <span class="label label-success">Complete</span>
+                        </div>
+                    <% } %>
+
+                    <div class="cart-item-info">
+                        <ul class="qty">
+                            <li>
+                                <p>Qty : <%=each.number%></p>
+                            </li>
+                            <li>
+                                <p>Price each : <%=each.productPrice%></p>
+                            </li>
+                            <li>
+                                <p>Total cost : <%=each.productPrice*each.number%></p>
+                            </li>
+                            <% var time_old = each.meta.updateAt;
+
+                                time_new = time_old.substring(0,10) + " " + time_old.substring(11,16);
+                               
+                            %>
+                        </ul>
+                        <p>Transition time: <%=time_new%></p>
+                        <p>Transition block : <%=each.blockhash%></p>
+                        <p>Freight: <%=each.delivery%></p>
+                        <p>Seller: <%=each.sellerName%></p>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+            <br/>
+            <%
+            }
+            %>
+
+        </div>
+    </div>
+</div>
+
+<!--5. foot start -->
+<%include footer.ejs%>
+</body>
+
+
+</html>

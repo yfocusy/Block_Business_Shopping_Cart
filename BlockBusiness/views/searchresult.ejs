@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SearchResult</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="N-Air Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template, Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design"
+    />
+    <script type="application/x-javascript">
+        addEventListener("load", function() {
+            setTimeout(hideURLbar, 0);
+        }, false);
+
+        function hideURLbar() {
+            window.scrollTo(0, 1);
+        }
+    </script>
+    <meta charset utf="8">
+    <!--fonts-->
+    <link href='https://fonts.googleapis.com/css?family=Fredoka+One' rel='stylesheet' type='text/css'>
+
+    <!--fonts-->
+    <!--form-css-->
+    <link href="/css/form.css" rel="stylesheet" type="text/css" media="all" />
+    <!--bootstrap-->
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <!--coustom css-->
+    <link href="/css/style.css" rel="stylesheet" type="text/css" />
+    <!--shop-kart-js-->
+    <script src="/js/simpleCart.min.js"></script>
+    <!--default-js-->
+    <script src="/js/jquery-2.1.4.min.js"></script>
+    <!--bootstrap-js-->
+    <script src="/js/bootstrap.min.js"></script>
+    <!--script-->
+    <!-- FlexSlider -->
+    <script src="/js/imagezoom.js"></script>
+    <script defer src="/js/jquery.flexslider.js"></script>
+    <link rel="stylesheet" href="/css/flexslider.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="/javascripts/allJSforProduct.js"></script>
+    <link href="/css/notice.css" rel="stylesheet" type="text/css">
+
+    <script>
+        // Can also be used with $(document).ready()
+        $(window).load(function() {
+            $('.flexslider').flexslider({
+                animation: "slide",
+                controlNav: "thumbnails"
+            });
+        });
+    </script>
+    <!-- //FlexSlider-->
+</head>
+
+<body>
+<%include header.ejs%>
+
+<%include searchbar.ejs%>
+
+
+
+<div class="head-bread">
+    <div class="container">
+        <ol class="breadcrumb">
+            <li><a href="/index">Home</a></li>
+            <li class="active">SEARCH RESULT FOR</li>
+            <li id="searchInfo" class="active" value="<%=searchInfo%>"><%=searchInfo%></li>
+            <script>
+                var searchInfo = "<%=searchInfo%>";
+                console.log("searchInfo = " + searchInfo);
+            </script>
+        </ol>
+    </div>
+</div>
+
+<div class="products-gallery">
+    <div class="container">
+        <div class="col-md-9 grid-gallery">
+
+            <%
+               for (var i=0 ; i<JSON.parse(JSON.stringify(result)).length; i++){
+                   console.log(JSON.parse(JSON.stringify(result))[0]);
+                   var each = JSON.parse(JSON.stringify(result))[i];
+                   console.log("each._id=");
+                   console.log(each._id);
+            %>
+            <div class="col-md-4 grid-stn simpleCart_shelfItem">
+                    <!-- normal -->
+                    <div class="ih-item square effect3 bottom_to_top">
+                      <div class="bottom-2-top">
+                        <div class="img img-thumbnail"><img style="width: 300px; height: 200px" src="<%=each.imgPath%>" alt="/" class="img-responsive gri-wid"></div>
+                        <div class="info">
+                          <div class="pull-left styl-hdn">
+                            <h3 style="white-space: nowrap;max-width: 200px; overflow: hidden "><%=each.productName%></h3>
+                          </div>
+                          <div class="pull-right styl-price">
+                            <p><a href="#" class="item_add">
+                               <span class="glyphicon glyphicon-shopping-cart grid-cart" aria-hidden="true"></span>
+                               <span>
+                                <img class="eth_small" src="/images/eth.png"/>
+                               </span><%=each.productPrice%>
+                               </a>
+                            </p>
+                        </div>
+                          <div class="clearfix"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- end normal -->
+                    <div class="quick-view">
+                      <a href="/single/showproduct?pid=<%=each._id%>">Quick view</a>
+                    </div>
+                  </div>
+
+            <%
+               }
+               if (JSON.parse(JSON.stringify(result)).length==0){
+
+
+            %>
+            <div>
+                <h3 align="middle">0 results for your search.</h3>
+            </div>
+
+            <%
+            }
+             %>
+
+
+
+
+            <div class="clearfix"></div>
+        </div>
+
+        <!--filtered result-->
+        <div class="col-md-3 grid-details">
+            <div class="grid-addon">
+
+                <section class="sky-form">
+                    <h4><span class="glyphicon glyphicon-search" aria-hidden="true"></span>&nbsp;Price range</h4>
+                    <div class="row row1 scroll-pane">
+                        <div class="col col-4">
+                            <div class="col-md-12" >
+                                <form method="get" action="/search" id="searchForm2">
+                                    <input hidden value="<%=searchInfo%>" name="searchInfo">
+                                    <%
+                                      if (max==undefined){max="Max"};
+                                      if (min==undefined){min="Min"};
+                                    %>
+                                    <input style="width: 50px" value="<%=min%>" type="text" id="min" name="min" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Min';}">
+                                    &nbsp to &nbsp
+                                    <input style="width: 50px" value="<%=max%>" type="text" id="max" name="max" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Max';}">
+                                    &nbsp &nbsp
+                                    <div style="margin-top: 10px">
+                                        <%
+                                          if (sellername == undefined){sellername = "sellername"}
+                                        %>
+                                        <input style="width: 120px" value="<%=sellername%>" type="text" id="sellername" name="sellername" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'sellername';}">
+
+                                    </div>
+                                    <div style="margin-top: 10px">
+                                        <a name="searchButton" type ="submit" class="btn btn-default log-bar"
+                                           href= "javascript:document.getElementById('searchForm2').submit();"  role="button">Submit</a>
+                                    </div>
+
+                                    <!--<a name="searchButton" type ="submit" class="btn btn-default log-bar"-->
+                                       <!--href= "javascript:document.getElementById('searchForm2').submit();"  role="button">Submit</a>-->
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+
+                <script type='text/javascript'>
+                    //<![CDATA[
+                    // $(window).load(function() {
+                    //     $("#slider-range").slider({
+                    //         range: true,
+                    //         min: 0,
+                    //         max: 400000,
+                    //         values: [2500, 350000],
+                    //         slide: function(event, ui) {
+                    //             $("#amount").val("$" + ui.values[0] + " - $" + ui.values[1]);
+                    //         }
+                    //     });
+                    //     $("#amount").val("$" + $("#slider-range").slider("values", 0) + " - $" + $("#slider-range").slider("values", 1));
+
+                    // });
+                </script>
+
+
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>
+<!--4.end -->
+
+<!--5.foot start -->
+<%include footer.ejs%>
+
+</body>
+
+</html>
